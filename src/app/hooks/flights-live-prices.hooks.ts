@@ -1,9 +1,10 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { autosuggestService } from "../services/autosuggest.service";
 import { flightsLivePricesService } from "../services/flights.service";
 
 export const useFlightsLivePrices = () => {
+  const [isDirectFlightsOnly, setIsDirectFlightsOnly] = useState(false);
   const { data: flightsLivePricesData, isLoading: flightsLivePricesIsLoading } =
     useQuery("flights-live-prices", () =>
       flightsLivePricesService.createAndPoll({
@@ -47,15 +48,18 @@ export const useFlightsLivePrices = () => {
 
   const cheapestIterId = useMemo(() => {
     if (!flightsLivePricesData) return undefined;
-    return flightsLivePricesData.content.sortingOptions.cheapest[0].itineraryId;
+    return flightsLivePricesData.content?.sortingOptions.cheapest[0]
+      .itineraryId;
   }, [flightsLivePricesData]);
 
   const cheapestItem = useMemo(() => {
     if (!cheapestIterId) return undefined;
-    return flightsLivePricesData?.content.results.itineraries[cheapestIterId];
+    return flightsLivePricesData?.content?.results.itineraries[cheapestIterId];
   }, [cheapestIterId, flightsLivePricesData]);
 
   return {
+    isDirectFlightsOnly,
+    setIsDirectFlightsOnly,
     flightsLivePricesData,
     flightsLivePricesIsLoading,
     autosuggestData,
