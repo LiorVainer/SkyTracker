@@ -1,5 +1,5 @@
 import { FlightsLivePricesBody } from "@/app/types/flights-live-prices.types";
-import { axiosInstance } from "./index.service";
+import { api } from "./index.service";
 
 const PREFIX = "flights";
 export class FlightsLivePricesService {
@@ -26,7 +26,7 @@ export class FlightsLivePricesService {
         },
       };
 
-      const res = await axiosInstance.post(PREFIX, body);
+      const res = await api.post(PREFIX, body);
       return res.data;
     } catch (error) {
       console.error(error);

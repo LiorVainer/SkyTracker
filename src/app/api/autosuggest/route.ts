@@ -1,14 +1,12 @@
-import { FlightsLivePricesBodySchema } from "@/app/types/flights-live-prices.types";
+import { FlightsAutosuggestBodySchema } from "@/app/types/flights-autosuggest.types";
 import { NextRequest, NextResponse } from "next/server";
-import { flightsLivePricesApiService } from "../services/flights-live-prices.service";
+import { autosuggestApiService } from "../services/autosuggest.service";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const validBody = FlightsLivePricesBodySchema.parse(body);
-    const res = await flightsLivePricesApiService.createAndPoll(
-      validBody.query
-    );
+    const validBody = FlightsAutosuggestBodySchema.parse(body);
+    const res = await autosuggestApiService.flights(validBody.query);
 
     if (res.status === 200) {
       return NextResponse.json(res.data);
