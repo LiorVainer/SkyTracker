@@ -14,13 +14,31 @@ export const QueryLegSchema = z.object({
   }),
 });
 
+export const CABIN_CLASS_ENUM = [
+  "CABIN_CLASS_ECONOMY",
+  "CABIN_CLASS_PREMIUM_ECONOMY",
+  "CABIN_CLASS_BUSINESS",
+  "CABIN_CLASS_FIRST",
+  "CABIN_CLASS_UNSPECIFIED",
+] as const;
+
+export const CABIN_CLASS = {
+  ECONOMY: "CABIN_CLASS_ECONOMY",
+  PREMIUM_ECONOMY: "CABIN_CLASS_PREMIUM_ECONOMY",
+  BUSINESS: "CABIN_CLASS_BUSINESS",
+  FIRST: "CABIN_CLASS_FIRST",
+  UNSPECIFIED: "CABIN_CLASS_UNSPECIFIED",
+} as const;
+
 export const FlightsLivePricesQuerySchema = z.object({
   market: z.string(),
   locale: z.string(),
   currency: z.string(),
   queryLegs: z.array(QueryLegSchema),
-  cabinClass: z.literal("CABIN_CLASS_ECONOMY"),
+  cabinClass: z.enum(CABIN_CLASS_ENUM),
   adults: z.number(),
+  childrenAges: z.array(z.number()).optional(),
+  nearbyAirports: z.boolean().optional(),
 });
 
 export const FlightsLivePricesBodySchema = z.object({
@@ -154,14 +172,19 @@ export const FlightsLivePricesResponseSchema = z.object({
       segments: z.record(SegmentSchema),
       alliances: z.record(AllianceSchema),
     }),
+    sortingOptions: z.object({
+      cheapest: z.array(
+        z.object({ score: z.number(), itineraryId: z.string() })
+      ),
+      best: z.array(z.unknown()),
+      fastest: z.array(z.unknown()),
+    }),
+    stats: z.object({}),
   }),
-  alliances: z.record(z.object({ name: z.string() })),
   sessionToken: z.string(),
   status: z.string(),
-  sortingOptions: z.object({
-    cheapest: z.array(z.object({ score: z.number(), itineraryId: z.string() })),
-    best: z.array(z.unknown()),
-    fastest: z.array(z.unknown()),
-  }),
-  stats: z.object({}),
 });
+
+export type FlightsLivePricesResponse = z.infer<
+  typeof FlightsLivePricesResponseSchema
+>;

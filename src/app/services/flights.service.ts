@@ -1,32 +1,21 @@
-import { FlightsLivePricesBody } from "@/app/types/flights-live-prices.types";
+import {
+  FlightsLivePricesBody,
+  FlightsLivePricesQuery,
+} from "@/app/types/flights-live-prices.types";
+import { AxiosResponse } from "axios";
+import { FlightsLivePricesResponse } from "./../types/flights-live-prices.types";
 import { api } from "./index.service";
 
 const PREFIX = "flights";
 export class FlightsLivePricesService {
-  async create() {
+  async createAndPoll(query: FlightsLivePricesQuery) {
     try {
-      const body: FlightsLivePricesBody = {
-        query: {
-          market: "UK",
-          locale: "en-GB",
-          currency: "EUR",
-          queryLegs: [
-            {
-              originPlaceId: { iata: "LHR" },
-              destinationPlaceId: { iata: "DXB" },
-              date: {
-                year: 2023,
-                month: 9,
-                day: 20,
-              },
-            },
-          ],
-          cabinClass: "CABIN_CLASS_ECONOMY",
-          adults: 2,
-        },
-      };
+      const res = await api.post<
+        FlightsLivePricesResponse,
+        AxiosResponse<FlightsLivePricesResponse>,
+        FlightsLivePricesBody
+      >(PREFIX, { query });
 
-      const res = await api.post(PREFIX, body);
       return res.data;
     } catch (error) {
       console.error(error);
