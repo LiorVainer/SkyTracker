@@ -4,7 +4,7 @@ import { autosuggestService } from "../services/autosuggest.service";
 import { flightsLivePricesService } from "../services/flights.service";
 
 export const useFlightsLivePrices = () => {
-  const [isDirectFlightsOnly, setIsDirectFlightsOnly] = useState(false);
+  const [isDirectFlightsOnly, setIsDirectFlightsOnly] = useState(true);
   const { data: flightsLivePricesData, isLoading: flightsLivePricesIsLoading } =
     useQuery("flights-live-prices", () =>
       flightsLivePricesService.createAndPoll({
@@ -31,11 +31,21 @@ export const useFlightsLivePrices = () => {
             },
           },
         ],
+        preferDirects: isDirectFlightsOnly,
         cabinClass: "CABIN_CLASS_ECONOMY",
         adults: 1,
         nearbyAirports: false,
       })
     );
+
+  const flightsLivePricesContent = useMemo(
+    () => flightsLivePricesData?.content,
+    [flightsLivePricesData]
+  );
+  const flightsLivePricesResults = useMemo(
+    () => flightsLivePricesData?.content?.results,
+    [flightsLivePricesData?.content?.results]
+  );
   const { data: autosuggestData, isLoading: autosuggestIsLoading } = useQuery(
     "flights-auto-suggest",
     () =>
@@ -47,10 +57,25 @@ export const useFlightsLivePrices = () => {
   );
 
   const cheapestIterId = useMemo(() => {
-    if (!flightsLivePricesData) return undefined;
-    return flightsLivePricesData.content?.sortingOptions.cheapest[0]
+    return flightsLivePricesData?.content?.sortingOptions.cheapest[0]
       .itineraryId;
   }, [flightsLivePricesData]);
+
+  const directFlightsOnlyIterAmount = useMemo(() => {
+    return (
+      flightsLivePricesResults?.itineraries &&
+      Object.values(flightsLivePricesResults?.itineraries).filter(
+        (iter) => iter.legIds.length === 2
+      ).length
+    );
+  }, [flightsLivePricesResults?.itineraries]);
+
+  const totalFlightsIterAmount = useMemo(() => {
+    return (
+      flightsLivePricesResults?.itineraries &&
+      Object.values(flightsLivePricesResults?.itineraries).length
+    );
+  }, [flightsLivePricesResults?.itineraries]);
 
   const cheapestItem = useMemo(() => {
     if (!cheapestIterId) return undefined;
@@ -65,5 +90,7 @@ export const useFlightsLivePrices = () => {
     autosuggestData,
     autosuggestIsLoading,
     cheapestItem,
+    directFlightsOnlyIterAmount,
+    totalFlightsIterAmount,
   };
 };

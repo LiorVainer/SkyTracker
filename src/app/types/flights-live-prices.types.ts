@@ -39,6 +39,7 @@ export const FlightsLivePricesQuerySchema = z.object({
   adults: z.number(),
   childrenAges: z.array(z.number()).optional(),
   nearbyAirports: z.boolean().optional(),
+  preferDirects: z.boolean().optional(),
 });
 
 export const FlightsLivePricesBodySchema = z.object({

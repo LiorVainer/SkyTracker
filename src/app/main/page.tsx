@@ -2,8 +2,15 @@ import { Switch } from "@adobe/react-spectrum";
 import { useFlightsLivePrices } from "../hooks/flights-live-prices.hooks";
 
 export default function Main() {
-  const { cheapestItem, autosuggestIsLoading, flightsLivePricesIsLoading, isDirectFlightsOnly } =
-    useFlightsLivePrices();
+  const {
+    cheapestItem,
+    autosuggestIsLoading,
+    flightsLivePricesIsLoading,
+    isDirectFlightsOnly,
+    setIsDirectFlightsOnly,
+    totalFlightsIterAmount,
+    directFlightsOnlyIterAmount,
+  } = useFlightsLivePrices();
 
   return (
     <div>
@@ -23,7 +30,24 @@ export default function Main() {
           <p>{cheapestItem.pricingOptions[0].price.amount}$</p>
         </div>
       )}
-      <Switch isSelected={isDirectFlightsOnly}></Switch>
+
+      {totalFlightsIterAmount && (
+        <div>
+          <p>Total Flights Iterations:</p>
+          <p>{totalFlightsIterAmount}</p>
+        </div>
+      )}
+
+      {directFlightsOnlyIterAmount && (
+        <div>
+          <p>Direct Flights Only Iterations:</p>
+          <p>{directFlightsOnlyIterAmount}</p>
+        </div>
+      )}
+      <Switch
+        onChange={() => setIsDirectFlightsOnly(!isDirectFlightsOnly)}
+        isSelected={isDirectFlightsOnly}
+      ></Switch>
     </div>
   );
 }
