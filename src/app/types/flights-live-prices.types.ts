@@ -39,7 +39,7 @@ export const FlightsLivePricesQuerySchema = z.object({
   adults: z.number(),
   childrenAges: z.array(z.number()).optional(),
   nearbyAirports: z.boolean().optional(),
-  preferDirects: z.boolean().optional(),
+  prefer_directs: z.boolean().optional(),
 });
 
 export const FlightsLivePricesBodySchema = z.object({
@@ -98,6 +98,7 @@ export const CarrierSchema = z.object({
 export const LegSchema = z.object({
   originPlaceId: z.string(),
   destinationPlaceId: z.string(),
+
   departureDateTime: z.object({
     year: z.number(),
     month: z.number(),
@@ -106,6 +107,19 @@ export const LegSchema = z.object({
     minute: z.number(),
     second: z.number(),
   }),
+  arrivalDateTime: z.object({
+    year: z.number(),
+    month: z.number(),
+    day: z.number(),
+    hour: z.number(),
+    minute: z.number(),
+    second: z.number(),
+  }),
+  marketingCarrierIds: z.array(z.string()),
+  operatingCarrierIds: z.array(z.string()),
+  durationInMinutes: z.number(),
+  segmentIds: z.array(z.string()),
+  stopCount: z.number(),
 });
 
 export const AgentSchema = z.object({

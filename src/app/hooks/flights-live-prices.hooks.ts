@@ -31,17 +31,13 @@ export const useFlightsLivePrices = () => {
             },
           },
         ],
-        preferDirects: isDirectFlightsOnly,
+        prefer_directs: isDirectFlightsOnly,
         cabinClass: "CABIN_CLASS_ECONOMY",
         adults: 1,
-        nearbyAirports: false,
+        nearbyAirports: true,
       })
     );
 
-  const flightsLivePricesContent = useMemo(
-    () => flightsLivePricesData?.content,
-    [flightsLivePricesData]
-  );
   const flightsLivePricesResults = useMemo(
     () => flightsLivePricesData?.content?.results,
     [flightsLivePricesData?.content?.results]
@@ -61,21 +57,21 @@ export const useFlightsLivePrices = () => {
       .itineraryId;
   }, [flightsLivePricesData]);
 
-  const directFlightsOnlyIterAmount = useMemo(() => {
+  const directFlightsOnlyLegs = useMemo(() => {
     return (
-      flightsLivePricesResults?.itineraries &&
-      Object.values(flightsLivePricesResults?.itineraries).filter(
-        (iter) => iter.legIds.length === 2
+      flightsLivePricesResults?.legs &&
+      Object.values(flightsLivePricesResults.legs).filter(
+        (iter) => iter.stopCount === 0
       ).length
     );
-  }, [flightsLivePricesResults?.itineraries]);
+  }, [flightsLivePricesResults?.legs]);
 
-  const totalFlightsIterAmount = useMemo(() => {
+  const totalFlightsLegsAmount = useMemo(() => {
     return (
-      flightsLivePricesResults?.itineraries &&
-      Object.values(flightsLivePricesResults?.itineraries).length
+      flightsLivePricesResults?.legs &&
+      Object.values(flightsLivePricesResults.legs).length
     );
-  }, [flightsLivePricesResults?.itineraries]);
+  }, [flightsLivePricesResults?.legs]);
 
   const cheapestItem = useMemo(() => {
     if (!cheapestIterId) return undefined;
@@ -90,7 +86,7 @@ export const useFlightsLivePrices = () => {
     autosuggestData,
     autosuggestIsLoading,
     cheapestItem,
-    directFlightsOnlyIterAmount,
-    totalFlightsIterAmount,
+    directFlightsOnlyIterAmount: directFlightsOnlyLegs,
+    totalFlightsIterAmount: totalFlightsLegsAmount,
   };
 };
